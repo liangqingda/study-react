@@ -1,7 +1,5 @@
+// 用于前端业务代码
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "extends": "@liangqingda/tsconfig/react.json",
+  "include": ["src"]
 }
