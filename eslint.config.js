@@ -8,6 +8,7 @@ export default [
   {
     files: ["**/*.d.ts"],
     rules: {
+      // .d.ts 文件不检查注释前后空格格式
       "spaced-comment": "off",
     },
   },
