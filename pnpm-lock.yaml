@@ -16,8 +16,8 @@ importers:
         version: 19.2.6(react@19.2.6)
     devDependencies:
       '@liangqingda/eslint-config':
-        specifier: ^1.2.5
-        version: 1.2.5(eslint@9.39.4)(prettier@3.8.3)(typescript@6.0.3)
+        specifier: ^1.2.14
+        version: 1.2.14(eslint@9.39.4)(prettier@3.8.3)(typescript@6.0.3)
       '@liangqingda/tsconfig':
         specifier: ^1.0.0
         version: 1.0.1(typescript@6.0.3)
@@ -352,8 +352,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@liangqingda/eslint-config@1.2.5':
-    resolution: {integrity: sha512-ydEptGESFgXhLNZRk67zpSX6vJVbkAPMAcz/CfxaDlOCWBsL+uytvaQcvBNVhYUulNt2FZwSnopQLfAN6zAsww==, tarball: https://npm.pkg.github.com/download/@liangqingda/eslint-config/1.2.5/e8e6c032a7c1207c579f123c133cdf93f6c38dce}
+  '@liangqingda/eslint-config@1.2.14':
+    resolution: {integrity: sha512-ZY3Xu4mOraDGvLCoE8PAryPEezAkulrHAVuaGNN/CL3M24M0QoBa7IHSpXVmxsc28okmkVFxJIcxAvL4DUajIw==, tarball: https://npm.pkg.github.com/download/@liangqingda/eslint-config/1.2.14/aac54fc167181c47c9d6af4439fc12c2e95a5aac}
     peerDependencies:
       eslint: ^9.39.4
       prettier: ^3.8.3
@@ -2095,7 +2095,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@liangqingda/eslint-config@1.2.5(eslint@9.39.4)(prettier@3.8.3)(typescript@6.0.3)':
+  '@liangqingda/eslint-config@1.2.14(eslint@9.39.4)(prettier@3.8.3)(typescript@6.0.3)':
     dependencies:
       '@eslint/js': 9.39.4
       '@typescript-eslint/eslint-plugin': 8.59.3(@typescript-eslint/parser@8.59.3(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)
