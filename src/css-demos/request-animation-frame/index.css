@@ -1,0 +1,302 @@
+:root {
+  color: #202124;
+  background: #f6f7f2;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.raf-demo {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 40px;
+  background:
+    radial-gradient(circle at top left, rgba(53, 132, 126, 0.16), transparent 34rem),
+    linear-gradient(135deg, #f7f7ef 0%, #eaf0ec 50%, #f4f1e9 100%);
+}
+
+.raf-shell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.raf-header {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.raf-kicker {
+  width: max-content;
+  padding: 5px 10px;
+  border: 1px solid rgba(32, 33, 36, 0.16);
+  border-radius: 999px;
+  color: #27605a;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.raf-title {
+  margin: 0;
+  color: #151718;
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.raf-subtitle {
+  max-width: 780px;
+  margin: 0;
+  color: #4b5357;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.raf-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.raf-panel {
+  border: 1px solid rgba(32, 33, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 50px rgba(24, 42, 44, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.raf-animation-panel {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+}
+
+.raf-track {
+  position: relative;
+  min-height: 190px;
+  overflow: hidden;
+  border: 1px solid rgba(37, 54, 58, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(35, 102, 96, 0.12) 1px, transparent 1px) 0 0 / 56px 100%,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 246, 239, 0.88));
+}
+
+.raf-track::before {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  left: 22px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(35, 45, 48, 0.12);
+  content: "";
+}
+
+.raf-progress {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  left: 22px;
+  height: 5px;
+  border-radius: 999px;
+  background: #236660;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left center;
+}
+
+.raf-ball {
+  --rotate: 0turn;
+  --x: 0px;
+  position: absolute;
+  bottom: 48px;
+  left: 22px;
+  display: grid;
+  width: 64px;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.9), transparent 18%),
+    conic-gradient(from 20deg, #236660, #d96f32, #f2c94c, #236660);
+  box-shadow: 0 16px 28px rgba(22, 65, 61, 0.25);
+  transform: translate3d(var(--x), 0, 0) rotate(var(--rotate));
+  will-change: transform;
+}
+
+.raf-ball::after {
+  width: 12px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  content: "";
+}
+
+.raf-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.raf-button {
+  min-width: 104px;
+  height: 42px;
+  border: 1px solid rgba(32, 33, 36, 0.18);
+  border-radius: 8px;
+  color: #ffffff;
+  background: #202124;
+  cursor: pointer;
+}
+
+.raf-button.secondary {
+  color: #202124;
+  background: #ffffff;
+}
+
+.raf-speed {
+  display: grid;
+  min-width: min(280px, 100%);
+  gap: 8px;
+  color: #384144;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.raf-speed input {
+  accent-color: #236660;
+}
+
+.raf-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+  gap: 12px;
+}
+
+.raf-metric {
+  min-height: 84px;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid rgba(32, 33, 36, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.raf-metric span {
+  display: block;
+  color: #627075;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.raf-metric strong {
+  display: block;
+  margin-top: 8px;
+  color: #151718;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.raf-notes {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 24px;
+}
+
+.raf-code h2,
+.raf-notes h2 {
+  margin: 0;
+  color: #171a1b;
+  font-size: 20px;
+}
+
+.raf-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  color: #475155;
+  line-height: 1.65;
+  list-style: none;
+}
+
+.raf-list li {
+  padding-left: 18px;
+  border-left: 3px solid rgba(35, 102, 96, 0.34);
+}
+
+.raf-code {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 24px;
+}
+
+.raf-code pre {
+  margin: 0;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: #171a1b;
+  color: #e7eee9;
+}
+
+.raf-code code {
+  display: block;
+  min-width: 620px;
+  padding: 18px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (max-width: 860px) {
+  .raf-demo {
+    padding: 24px;
+  }
+
+  .raf-stage {
+    grid-template-columns: 1fr;
+  }
+
+  .raf-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .raf-demo {
+    padding: 18px;
+  }
+
+  .raf-animation-panel,
+  .raf-code,
+  .raf-notes {
+    padding: 18px;
+  }
+
+  .raf-track {
+    min-height: 160px;
+  }
+
+  .raf-ball {
+    width: 52px;
+  }
+
+  .raf-metrics {
+    grid-template-columns: 1fr;
+  }
+}
