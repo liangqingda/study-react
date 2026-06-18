@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import './index.css';
+import styles from './index.scss';
 
 type Snapshot = {
   fps: number;
@@ -170,41 +170,45 @@ const RequestAnimationFrameDemo = () => {
   }, []);
 
   return (
-    <main className="raf-demo">
-      <div className="raf-shell">
-        <header className="raf-header">
-          <span className="raf-kicker">CSS + requestAnimationFrame</span>
-          <h1 className="raf-title">用浏览器的刷新节奏驱动 CSS 动画</h1>
-          <p className="raf-subtitle">
+    <main className={styles.rafDemo}>
+      <div className={styles.rafShell}>
+        <header className={styles.rafHeader}>
+          <span className={styles.rafKicker}>CSS + requestAnimationFrame</span>
+          <h1 className={styles.rafTitle}>用浏览器的刷新节奏驱动 CSS 动画</h1>
+          <p className={styles.rafSubtitle}>
             这个 demo 每一帧只做三件事：读取 RAF 传入的时间戳、计算位移进度、
             写入 CSS 变量。元素的视觉更新由 `transform` 和 `will-change` 接管。
           </p>
         </header>
 
-        <section className="raf-stage">
-          <div className="raf-panel raf-animation-panel">
+        <section className={styles.rafStage}>
+          <div className={`${styles.rafPanel} ${styles.rafAnimationPanel}`}>
             <div
               aria-label="requestAnimationFrame animation track"
-              className="raf-track"
+              className={styles.rafTrack}
               ref={trackRef}
             >
-              <div className="raf-progress" ref={progressRef} />
-              <div className="raf-ball" ref={ballRef} />
+              <div className={styles.rafProgress} ref={progressRef} />
+              <div className={styles.rafBall} ref={ballRef} />
             </div>
 
-            <div className="raf-controls">
+            <div className={styles.rafControls}>
               <button
-                className="raf-button"
+                className={styles.rafButton}
                 onClick={() => setIsRunning((value) => !value)}
                 type="button"
               >
                 {isRunning ? '暂停' : '继续'}
               </button>
-              <button className="raf-button secondary" onClick={reset} type="button">
+              <button
+                className={`${styles.rafButton} ${styles.secondary}`}
+                onClick={reset}
+                type="button"
+              >
                 重置
               </button>
 
-              <label className="raf-speed">
+              <label className={styles.rafSpeed}>
                 速度：{speed.toFixed(2)} progress/s
                 <input
                   max="0.8"
@@ -217,29 +221,29 @@ const RequestAnimationFrameDemo = () => {
               </label>
             </div>
 
-            <div className="raf-metrics">
-              <div className="raf-metric">
+            <div className={styles.rafMetrics}>
+              <div className={styles.rafMetric}>
                 <span>FPS</span>
                 <strong>{snapshot.fps.toFixed(0)}</strong>
               </div>
-              <div className="raf-metric">
+              <div className={styles.rafMetric}>
                 <span>帧数</span>
                 <strong>{snapshot.frames}</strong>
               </div>
-              <div className="raf-metric">
+              <div className={styles.rafMetric}>
                 <span>进度</span>
                 <strong>{Math.round(snapshot.progress * 100)}%</strong>
               </div>
-              <div className="raf-metric">
+              <div className={styles.rafMetric}>
                 <span>位移</span>
                 <strong>{Math.round(snapshot.x)}px</strong>
               </div>
             </div>
           </div>
 
-          <aside className="raf-panel raf-notes">
+          <aside className={`${styles.rafPanel} ${styles.rafNotes}`}>
             <h2>学习重点</h2>
-            <ul className="raf-list">
+            <ul className={styles.rafList}>
               <li>`requestAnimationFrame` 会在浏览器准备绘制下一帧前调用回调。</li>
               <li>回调参数 `now` 是高精度时间戳，用它计算 `delta`。</li>
               <li>每帧更新 `transform` 相关的 CSS 变量，比频繁改 `left/top` 更适合动画。</li>
@@ -248,7 +252,7 @@ const RequestAnimationFrameDemo = () => {
           </aside>
         </section>
 
-        <section className="raf-panel raf-code">
+        <section className={`${styles.rafPanel} ${styles.rafCode}`}>
           <h2>核心循环</h2>
           <pre>
             <code>{loopSnippet}</code>

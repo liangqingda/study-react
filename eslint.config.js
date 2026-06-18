@@ -8,7 +8,7 @@ const rootDir = dirname(fileURLToPath(import.meta.url));
 export default [
   ...reactTypedConfig,
   {
-    ignores: ["dist/**", "eslint.config.js", ".prettierrc.js"],
+    ignores: ["dist/**", "eslint.config.js", ".prettierrc.js", "scripts/**"],
   },
   {
     files: ['vite.config.ts'],
@@ -25,6 +25,12 @@ export default [
     rules: {
       // .d.ts 文件不检查注释前后空格格式
       'spaced-comment': 'off',
+    },
+  },
+  {
+    files: ['src/pages/**/*.{ts,tsx}'],
+    rules: {
+      'liangqingda-react/folder-naming-convention': 'off',
     },
   },
 ];
