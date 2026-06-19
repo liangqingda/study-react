@@ -1,103 +1,41 @@
-.demo-sidebar {
-  flex: 0 0 240px;
-  width: 240px;
-  height: calc(100vh - 50px);
-  overflow: hidden;
-  border-right: 1px solid #e7ebf2;
-  background: #ffffff;
-}
-
-.demo-sidebar-scroll {
+.demo-sidebar-desktop {
   height: 100%;
-  overflow-y: auto;
-  padding: 12px 10px;
 }
 
 .demo-sidebar-list {
   display: grid;
   gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  padding: 12px 10px;
 }
 
-.demo-sidebar-list.nested {
-  margin-top: 4px;
-  padding-left: 12px;
-}
-
-.demo-sidebar-item {
-  min-width: 0;
-}
-
-.demo-sidebar-link,
-.demo-sidebar-group-label {
-  display: flex;
-  width: 100%;
-  min-height: 36px;
-  align-items: center;
-  padding: 8px 10px;
-  border-radius: 8px;
-  color: #465267;
-  background: transparent;
-  text-align: left;
+.demo-sidebar-mobile {
+  display: none;
 }
 
 .demo-sidebar-link {
-  cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
+  border-radius: var(--mantine-radius-md);
 }
 
-.demo-sidebar-link:hover {
-  background: #f3f6fb;
-}
-
-.demo-sidebar-link[aria-current="page"] {
-  color: #1f6feb;
-  background: #eaf2ff;
-  font-weight: 700;
-}
-
-.demo-sidebar-link:focus-visible {
-  outline: 3px solid rgba(31, 111, 235, 0.18);
-  outline-offset: 2px;
-}
-
-.demo-sidebar-group-label {
-  color: #7a8494;
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-@media (max-width: 960px) {
-  .demo-sidebar {
-    flex-basis: auto;
-    width: 100%;
-    height: auto;
-    border-right: 0;
-    border-bottom: 1px solid #e7ebf2;
+@media (max-width: 48em) {
+  .demo-sidebar-desktop {
+    display: none;
   }
 
-  .demo-sidebar-scroll {
-    padding: 8px 14px;
-  }
-
-  .demo-sidebar-list {
+  .demo-sidebar-mobile {
     display: flex;
     gap: 6px;
     overflow-x: auto;
+    padding: 8px 14px;
+    scrollbar-width: none;
   }
 
-  .demo-sidebar-list.nested {
-    margin-top: 0;
-    padding-left: 0;
+  .demo-sidebar-mobile::-webkit-scrollbar {
+    display: none;
   }
 
-  .demo-sidebar-link,
-  .demo-sidebar-group-label {
-    white-space: nowrap;
+  .demo-sidebar-link {
+    flex: 0 0 auto;
+    width: max-content;
+    min-width: 180px;
   }
 }

@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router';
+import { Group, SegmentedControl, ThemeIcon, Title } from '@mantine/core';
+import { IconBrandReact } from '@tabler/icons-react';
 
 import type { DemoMenuItem } from '../../generated/routes';
 
@@ -11,29 +13,45 @@ type HeaderProps = {
 
 const Header = ({ menus, selectedTopLevelKey }: HeaderProps) => {
   const navigate = useNavigate();
+  const activeMenuKey = selectedTopLevelKey ?? menus[0]?.key;
+  const menuData = menus.map((item) => ({
+    label: item.label,
+    value: item.key,
+  }));
+
+  const handleMenuChange = (value: string) => {
+    const nextMenu = menus.find((item) => item.key === value);
+
+    if (nextMenu?.path) {
+      navigate(nextMenu.path);
+    }
+  };
 
   return (
-    <header className={styles.demoHeader}>
-      <div className={styles.demoHeaderInner}>
-        <div className={styles.demoHeaderBrand}>
-          <h1 className={styles.demoTitle}>React Demo Lab</h1>
-        </div>
+    <Group className={styles.demoHeaderInner} gap="lg" h="100%" wrap="nowrap">
+      <Group className={styles.demoHeaderBrand} gap="sm" wrap="nowrap">
+        <ThemeIcon radius="md" size={34} variant="light">
+          <IconBrandReact size={21} stroke={1.8} />
+        </ThemeIcon>
+        <Title className={styles.demoTitle} order={1}>
+          React Demo Lab
+        </Title>
+      </Group>
 
+      {activeMenuKey && menuData.length > 0 ? (
         <nav aria-label="Demo sections" className={styles.demoHeaderMenu}>
-          {menus.map((item) => (
-            <button
-              aria-current={item.key === selectedTopLevelKey ? 'page' : undefined}
-              className={styles.demoHeaderMenuItem}
-              key={item.key}
-              onClick={() => item.path && navigate(item.path)}
-              type="button"
-            >
-              {item.label}
-            </button>
-          ))}
+          <SegmentedControl
+            className={styles.demoHeaderSegments}
+            color="blue"
+            data={menuData}
+            onChange={handleMenuChange}
+            radius="md"
+            size="sm"
+            value={activeMenuKey}
+          />
         </nav>
-      </div>
-    </header>
+      ) : null}
+    </Group>
   );
 };
 

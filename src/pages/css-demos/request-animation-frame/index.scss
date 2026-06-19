@@ -1,5 +1,5 @@
 .raf-demo {
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
   box-sizing: border-box;
   padding: 40px;
   background:
@@ -8,41 +8,29 @@
 }
 
 .raf-shell {
-  width: min(1120px, 100%);
-  margin: 0 auto;
+  padding: 0;
 }
 
 .raf-header {
   display: grid;
   gap: 12px;
-  margin-bottom: 24px;
 }
 
 .raf-kicker {
   width: max-content;
-  padding: 5px 10px;
-  border: 1px solid rgba(32, 33, 36, 0.16);
-  border-radius: 999px;
-  color: #27605a;
-  background: rgba(255, 255, 255, 0.62);
-  font-size: 13px;
   font-weight: 700;
+  text-transform: none;
 }
 
 .raf-title {
-  margin: 0;
   color: #151718;
-  font-size: clamp(32px, 5vw, 58px);
+  font-size: 48px;
   line-height: 1.02;
   letter-spacing: 0;
 }
 
 .raf-subtitle {
   max-width: 780px;
-  margin: 0;
-  color: #4b5357;
-  font-size: 17px;
-  line-height: 1.7;
 }
 
 .raf-stage {
@@ -53,17 +41,8 @@
 }
 
 .raf-panel {
-  border: 1px solid rgba(32, 33, 36, 0.12);
-  border-radius: 8px;
   background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 18px 50px rgba(24, 42, 44, 0.1);
   backdrop-filter: blur(18px);
-}
-
-.raf-animation-panel {
-  display: grid;
-  gap: 20px;
-  padding: 24px;
 }
 
 .raf-track {
@@ -129,119 +108,50 @@
 }
 
 .raf-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-}
-
-.raf-button {
-  min-width: 104px;
-  height: 42px;
-  border: 1px solid rgba(32, 33, 36, 0.18);
-  border-radius: 8px;
-  color: #ffffff;
-  background: #202124;
-  cursor: pointer;
-}
-
-.raf-button.secondary {
-  color: #202124;
-  background: #ffffff;
+  min-width: 0;
 }
 
 .raf-speed {
-  display: grid;
-  min-width: min(280px, 100%);
-  gap: 8px;
-  color: #384144;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.raf-speed input {
-  accent-color: #236660;
-}
-
-.raf-metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(110px, 1fr));
-  gap: 12px;
+  flex: 1 1 280px;
+  min-width: min(320px, 100%);
 }
 
 .raf-metric {
-  min-height: 84px;
-  box-sizing: border-box;
-  padding: 14px;
+  display: flex;
+  min-height: 82px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
   border: 1px solid rgba(32, 33, 36, 0.1);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.7);
 }
 
-.raf-metric span {
-  display: block;
-  color: #627075;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.raf-metric strong {
-  display: block;
-  margin-top: 8px;
+.raf-metric-value {
+  margin-top: 4px;
   color: #151718;
   font-size: 24px;
   line-height: 1;
 }
 
 .raf-notes {
-  display: grid;
-  align-content: start;
-  gap: 18px;
-  padding: 24px;
-}
-
-.raf-code h2,
-.raf-notes h2 {
-  margin: 0;
-  color: #171a1b;
-  font-size: 20px;
+  align-self: stretch;
 }
 
 .raf-list {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
   color: #475155;
-  line-height: 1.65;
-  list-style: none;
-}
-
-.raf-list li {
-  padding-left: 18px;
-  border-left: 3px solid rgba(35, 102, 96, 0.34);
 }
 
 .raf-code {
-  display: grid;
-  gap: 14px;
-  margin-top: 18px;
-  padding: 24px;
+  overflow: hidden;
 }
 
-.raf-code pre {
-  margin: 0;
-  overflow-x: auto;
-  border-radius: 8px;
-  background: #171a1b;
-  color: #e7eee9;
-}
-
-.raf-code code {
-  display: block;
-  min-width: 620px;
+.raf-code-block {
+  min-width: 100%;
   padding: 18px;
+  border-radius: 8px;
+  background: #171a1b !important;
+  color: #e7eee9;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -254,10 +164,6 @@
   .raf-stage {
     grid-template-columns: 1fr;
   }
-
-  .raf-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 520px) {
@@ -265,10 +171,8 @@
     padding: 18px;
   }
 
-  .raf-animation-panel,
-  .raf-code,
-  .raf-notes {
-    padding: 18px;
+  .raf-title {
+    font-size: 34px;
   }
 
   .raf-track {
@@ -277,9 +181,5 @@
 
   .raf-ball {
     width: 52px;
-  }
-
-  .raf-metrics {
-    grid-template-columns: 1fr;
   }
 }

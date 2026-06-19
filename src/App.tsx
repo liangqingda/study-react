@@ -5,13 +5,13 @@ import {
   Routes,
   useNavigate,
 } from 'react-router';
+import { Badge, Button, Center, Stack, Text, Title } from '@mantine/core';
+import { IconArrowBackUp } from '@tabler/icons-react';
 
 import type { ReactNode } from 'react';
 
 import { defaultRoutePath, demoRoutes } from './generated/routes';
 import BasicLayout from './layouts/BasicLayout';
-
-import styles from './App.scss';
 
 type ResultViewProps = {
   action?: ReactNode;
@@ -21,14 +21,20 @@ type ResultViewProps = {
 };
 
 const ResultView = ({ action, status, subTitle, title }: ResultViewProps) => (
-  <section className={styles.demoResult}>
-    <div aria-hidden="true" className={styles.demoResultStatus}>
-      {status}
-    </div>
-    <h1>{title}</h1>
-    <p>{subTitle}</p>
-    {action ? <div className={styles.demoResultAction}>{action}</div> : null}
-  </section>
+  <Center mih="calc(100vh - 56px)" p="xl">
+    <Stack align="center" gap="sm" maw={640} ta="center">
+      <Badge radius="xl" size="lg" variant="light">
+        {status}
+      </Badge>
+      <Title order={1} size="h2">
+        {title}
+      </Title>
+      <Text c="dimmed" lh={1.7}>
+        {subTitle}
+      </Text>
+      {action}
+    </Stack>
+  </Center>
 );
 
 const EmptyRoutes = () => (
@@ -45,13 +51,13 @@ const NotFound = () => {
   return (
     <ResultView
       action={
-        <button
-          className={styles.demoPrimaryButton}
+        <Button
+          leftSection={<IconArrowBackUp size={18} stroke={1.8} />}
           onClick={() => navigate(defaultRoutePath)}
           type="button"
         >
           返回默认 Demo
-        </button>
+        </Button>
       }
       status="404"
       subTitle="当前地址没有匹配到 demo 页面。"

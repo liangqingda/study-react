@@ -1,4 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
+import {
+  Badge,
+  Button,
+  Card,
+  Code,
+  Container,
+  Group,
+  Kbd,
+  List,
+  SimpleGrid,
+  Slider,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+} from '@mantine/core';
+import {
+  IconActivityHeartbeat,
+  IconCode,
+  IconGauge,
+  IconPercentage,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconRefresh,
+  IconRoute,
+} from '@tabler/icons-react';
 
 import styles from './index.scss';
 
@@ -169,96 +195,210 @@ const RequestAnimationFrameDemo = () => {
     };
   }, []);
 
+  const metrics = [
+    {
+      icon: <IconGauge size={18} stroke={1.8} />,
+      label: 'FPS',
+      value: snapshot.fps.toFixed(0),
+    },
+    {
+      icon: <IconActivityHeartbeat size={18} stroke={1.8} />,
+      label: '帧数',
+      value: snapshot.frames,
+    },
+    {
+      icon: <IconPercentage size={18} stroke={1.8} />,
+      label: '进度',
+      value: `${Math.round(snapshot.progress * 100)}%`,
+    },
+    {
+      icon: <IconRoute size={18} stroke={1.8} />,
+      label: '位移',
+      value: `${Math.round(snapshot.x)}px`,
+    },
+  ];
+
   return (
     <main className={styles.rafDemo}>
-      <div className={styles.rafShell}>
-        <header className={styles.rafHeader}>
-          <span className={styles.rafKicker}>CSS + requestAnimationFrame</span>
-          <h1 className={styles.rafTitle}>用浏览器的刷新节奏驱动 CSS 动画</h1>
-          <p className={styles.rafSubtitle}>
-            这个 demo 每一帧只做三件事：读取 RAF 传入的时间戳、计算位移进度、
-            写入 CSS 变量。元素的视觉更新由 `transform` 和 `will-change` 接管。
-          </p>
-        </header>
-
-        <section className={styles.rafStage}>
-          <div className={`${styles.rafPanel} ${styles.rafAnimationPanel}`}>
-            <div
-              aria-label="requestAnimationFrame animation track"
-              className={styles.rafTrack}
-              ref={trackRef}
+      <Container className={styles.rafShell} size="lg">
+        <Stack gap="xl">
+          <header className={styles.rafHeader}>
+            <Badge
+              className={styles.rafKicker}
+              color="teal"
+              radius="xl"
+              variant="light"
             >
-              <div className={styles.rafProgress} ref={progressRef} />
-              <div className={styles.rafBall} ref={ballRef} />
-            </div>
+              CSS + requestAnimationFrame
+            </Badge>
+            <Title className={styles.rafTitle} order={1}>
+              用浏览器的刷新节奏驱动 CSS 动画
+            </Title>
+            <Text c="dimmed" className={styles.rafSubtitle} lh={1.7} size="lg">
+            这个 demo 每一帧只做三件事：读取 RAF 传入的时间戳、计算位移进度、
+              写入 CSS 变量。元素的视觉更新由 <Kbd>transform</Kbd> 和{' '}
+              <Kbd>will-change</Kbd> 接管。
+            </Text>
+          </header>
 
-            <div className={styles.rafControls}>
-              <button
-                className={styles.rafButton}
-                onClick={() => setIsRunning((value) => !value)}
-                type="button"
-              >
-                {isRunning ? '暂停' : '继续'}
-              </button>
-              <button
-                className={`${styles.rafButton} ${styles.secondary}`}
-                onClick={reset}
-                type="button"
-              >
-                重置
-              </button>
+          <section className={styles.rafStage}>
+            <Card
+              className={styles.rafPanel}
+              padding="xl"
+              radius="md"
+              shadow="sm"
+              withBorder
+            >
+              <Stack gap="lg">
+                <div
+                  aria-label="requestAnimationFrame animation track"
+                  className={styles.rafTrack}
+                  ref={trackRef}
+                >
+                  <div className={styles.rafProgress} ref={progressRef} />
+                  <div className={styles.rafBall} ref={ballRef} />
+                </div>
 
-              <label className={styles.rafSpeed}>
-                速度：{speed.toFixed(2)} progress/s
-                <input
-                  max="0.8"
-                  min="0.08"
-                  onChange={(event) => setSpeed(Number(event.target.value))}
-                  step="0.02"
-                  type="range"
-                  value={speed}
-                />
-              </label>
-            </div>
+                <Group align="flex-end" className={styles.rafControls} gap="sm">
+                  <Button
+                    leftSection={
+                      isRunning ? (
+                        <IconPlayerPause size={18} stroke={1.8} />
+                      ) : (
+                        <IconPlayerPlay size={18} stroke={1.8} />
+                      )
+                    }
+                    onClick={() => setIsRunning((value) => !value)}
+                    type="button"
+                  >
+                    {isRunning ? '暂停' : '继续'}
+                  </Button>
+                  <Button
+                    leftSection={<IconRefresh size={18} stroke={1.8} />}
+                    onClick={reset}
+                    type="button"
+                    variant="default"
+                  >
+                    重置
+                  </Button>
 
-            <div className={styles.rafMetrics}>
-              <div className={styles.rafMetric}>
-                <span>FPS</span>
-                <strong>{snapshot.fps.toFixed(0)}</strong>
-              </div>
-              <div className={styles.rafMetric}>
-                <span>帧数</span>
-                <strong>{snapshot.frames}</strong>
-              </div>
-              <div className={styles.rafMetric}>
-                <span>进度</span>
-                <strong>{Math.round(snapshot.progress * 100)}%</strong>
-              </div>
-              <div className={styles.rafMetric}>
-                <span>位移</span>
-                <strong>{Math.round(snapshot.x)}px</strong>
-              </div>
-            </div>
-          </div>
+                  <Stack className={styles.rafSpeed} gap={6}>
+                    <Group gap="xs" justify="space-between" wrap="nowrap">
+                      <Text fw={700} size="sm">
+                        速度
+                      </Text>
+                      <Badge color="teal" radius="sm" variant="light">
+                        {speed.toFixed(2)} progress/s
+                      </Badge>
+                    </Group>
+                    <Slider
+                      color="teal"
+                      label={(value) => value.toFixed(2)}
+                      max={0.8}
+                      min={0.08}
+                      onChange={setSpeed}
+                      step={0.02}
+                      thumbLabel="Animation speed"
+                      value={speed}
+                    />
+                  </Stack>
+                </Group>
 
-          <aside className={`${styles.rafPanel} ${styles.rafNotes}`}>
-            <h2>学习重点</h2>
-            <ul className={styles.rafList}>
-              <li>`requestAnimationFrame` 会在浏览器准备绘制下一帧前调用回调。</li>
-              <li>回调参数 `now` 是高精度时间戳，用它计算 `delta`。</li>
-              <li>每帧更新 `transform` 相关的 CSS 变量，比频繁改 `left/top` 更适合动画。</li>
-              <li>组件卸载时调用 `cancelAnimationFrame`，避免后台循环继续运行。</li>
-            </ul>
-          </aside>
-        </section>
+                <SimpleGrid
+                  className={styles.rafMetrics}
+                  cols={{ base: 1, xs: 2, md: 4 }}
+                  spacing="sm"
+                >
+                  {metrics.map((metric) => (
+                    <div className={styles.rafMetric} key={metric.label}>
+                      <ThemeIcon color="teal" radius="md" size={34} variant="light">
+                        {metric.icon}
+                      </ThemeIcon>
+                      <div>
+                        <Text c="dimmed" fw={700} size="xs" tt="uppercase">
+                          {metric.label}
+                        </Text>
+                        <Text className={styles.rafMetricValue} fw={800}>
+                          {metric.value}
+                        </Text>
+                      </div>
+                    </div>
+                  ))}
+                </SimpleGrid>
+              </Stack>
+            </Card>
 
-        <section className={`${styles.rafPanel} ${styles.rafCode}`}>
-          <h2>核心循环</h2>
-          <pre>
-            <code>{loopSnippet}</code>
-          </pre>
-        </section>
-      </div>
+            <Card
+              className={`${styles.rafPanel} ${styles.rafNotes}`}
+              padding="xl"
+              radius="md"
+              shadow="sm"
+              withBorder
+            >
+              <Stack gap="md">
+                <Group gap="sm" wrap="nowrap">
+                  <ThemeIcon color="blue" radius="md" size={34} variant="light">
+                    <IconActivityHeartbeat size={19} stroke={1.8} />
+                  </ThemeIcon>
+                  <Title order={2} size="h3">
+                    学习重点
+                  </Title>
+                </Group>
+
+                <List
+                  center
+                  className={styles.rafList}
+                  icon={
+                    <ThemeIcon color="teal" radius="xl" size={20} variant="light">
+                      <IconActivityHeartbeat size={13} stroke={2} />
+                    </ThemeIcon>
+                  }
+                  spacing="sm"
+                >
+                  <List.Item>
+                    <Kbd>requestAnimationFrame</Kbd>{' '}
+                    会在浏览器准备绘制下一帧前调用回调。
+                  </List.Item>
+                  <List.Item>
+                    回调参数 <Kbd>now</Kbd> 是高精度时间戳，用它计算{' '}
+                    <Kbd>delta</Kbd>。
+                  </List.Item>
+                  <List.Item>
+                    每帧更新 <Kbd>transform</Kbd> 相关的 CSS 变量，比频繁改{' '}
+                    <Kbd>left/top</Kbd> 更适合动画。
+                  </List.Item>
+                  <List.Item>
+                    组件卸载时调用 <Kbd>cancelAnimationFrame</Kbd>
+                    ，避免后台循环继续运行。
+                  </List.Item>
+                </List>
+              </Stack>
+            </Card>
+          </section>
+
+          <Card
+            className={`${styles.rafPanel} ${styles.rafCode}`}
+            padding="xl"
+            radius="md"
+            shadow="sm"
+            withBorder
+          >
+            <Stack gap="md">
+              <Group gap="sm" wrap="nowrap">
+                <ThemeIcon color="dark" radius="md" size={34} variant="light">
+                  <IconCode size={19} stroke={1.8} />
+                </ThemeIcon>
+                <Title order={2} size="h3">
+                  核心循环
+                </Title>
+              </Group>
+              <Code block className={styles.rafCodeBlock}>
+                {loopSnippet}
+              </Code>
+            </Stack>
+          </Card>
+        </Stack>
+      </Container>
     </main>
   );
 };

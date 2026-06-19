@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router';
+import { AppShell } from '@mantine/core';
 
 import type { ReactNode } from 'react';
 
@@ -29,23 +30,28 @@ const BasicLayout = ({ children }: BasicLayoutProps) => {
     : [];
 
   return (
-    <div className={styles.demoApp}>
-      <Header
-        menus={headerMenus}
-        selectedTopLevelKey={selectedTopLevelKey}
-      />
+    <AppShell
+      className={styles.demoApp}
+      header={{ height: 56 }}
+      navbar={{ breakpoint: 'sm', width: 252 }}
+      padding={0}
+      withBorder={false}
+    >
+      <AppShell.Header className={styles.demoHeader}>
+        <Header menus={headerMenus} selectedTopLevelKey={selectedTopLevelKey} />
+      </AppShell.Header>
 
-      <div className={styles.demoBody}>
+      <AppShell.Navbar className={styles.demoSidebar}>
         <Sidebar
           menus={sidebarMenus}
           routes={demoRoutes}
           sectionKey={selectedTopLevelKey}
           selectedRoute={selectedRoute}
         />
+      </AppShell.Navbar>
 
-        <div className={styles.demoMain}>{children}</div>
-      </div>
-    </div>
+      <AppShell.Main className={styles.demoMain}>{children}</AppShell.Main>
+    </AppShell>
   );
 };
 
