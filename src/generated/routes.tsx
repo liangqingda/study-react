@@ -3,13 +3,15 @@
 import type { ComponentType } from 'react';
 
 import CssDemosRequestAnimationFramePage from "../pages/css-demos/request-animation-frame/index";
+import ErrorsEmptyRoutesPage from "../pages/errors/EmptyRoutes";
+import ErrorsNotFoundPage from "../pages/errors/NotFound";
 
 export type DemoRoute = {
   path: string;
   menuKey: string;
   topLevelKey: string;
   label: string;
-  Component: ComponentType;
+  Component: ComponentType<any>;
 };
 
 export type DemoMenuItem = {
@@ -29,6 +31,20 @@ export const demoRoutes: DemoRoute[] = [
     label: "request-animation-frame",
     Component: CssDemosRequestAnimationFramePage,
   },
+  {
+    path: "/errors/EmptyRoutes",
+    menuKey: "/errors/EmptyRoutes",
+    topLevelKey: "/errors",
+    label: "EmptyRoutes",
+    Component: ErrorsEmptyRoutesPage,
+  },
+  {
+    path: "/errors/NotFound",
+    menuKey: "/errors/NotFound",
+    topLevelKey: "/errors",
+    label: "NotFound",
+    Component: ErrorsNotFoundPage,
+  },
 ];
 
 export const headerMenus: DemoMenuItem[] = [
@@ -36,6 +52,11 @@ export const headerMenus: DemoMenuItem[] = [
     "key": "/css-demos",
     "label": "css-demos",
     "path": "/css-demos/request-animation-frame"
+  },
+  {
+    "key": "/errors",
+    "label": "errors",
+    "path": "/errors/EmptyRoutes"
   }
 ];
 
@@ -45,6 +66,18 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
       "key": "/css-demos/request-animation-frame",
       "label": "request-animation-frame",
       "path": "/css-demos/request-animation-frame"
+    }
+  ],
+  "/errors": [
+    {
+      "key": "/errors/EmptyRoutes",
+      "label": "EmptyRoutes",
+      "path": "/errors/EmptyRoutes"
+    },
+    {
+      "key": "/errors/NotFound",
+      "label": "NotFound",
+      "path": "/errors/NotFound"
     }
   ]
 };

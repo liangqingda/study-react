@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { MantineProvider, createTheme } from '@mantine/core';
 
 import App from './App.tsx';
-import './global.scss';
+import './styles/global.scss';
 
 const theme = createTheme({
   defaultRadius: 'md',

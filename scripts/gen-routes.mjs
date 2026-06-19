@@ -1,19 +1,28 @@
 #!/usr/bin/env node
 
-import { access, mkdir, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pagesDir = path.join(rootDir, 'src/pages');
 const outputFile = path.join(rootDir, 'src/generated/routes.tsx');
-const indexExtensions = ['tsx', 'jsx', 'ts', 'js'];
+const pageFileExtensionPattern = /\.(tsx|jsx|ts|js)$/;
+const ignoredSegmentNames = new Set(['components', 'hooks', 'utils']);
 
 const compareByName = (left, right) => left.name.localeCompare(right.name);
 
 const jsString = (value) => JSON.stringify(value);
 
 const pathToRoute = (segments) => `/${segments.join('/')}`;
+
+const stripPageFileExtension = (fileName) =>
+  fileName.replace(pageFileExtensionPattern, '');
+
+const isPageFile = (entry) =>
+  entry.isFile() &&
+  pageFileExtensionPattern.test(entry.name) &&
+  !entry.name.endsWith('.d.ts');
 
 const toIdentifierPart = (value) =>
   value
@@ -51,30 +60,61 @@ const directoryExists = async (directory) => {
   }
 };
 
-const readDirectories = async (directory) => {
+const readVisibleEntries = async (directory) => {
   const entries = await directoryExists(directory);
 
   return entries
-    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
+    .filter((entry) => !entry.name.startsWith('.'))
     .sort(compareByName);
 };
 
-const findIndexFile = async (directory) => {
-  for (const extension of indexExtensions) {
-    const filePath = path.join(directory, `index.${extension}`);
+const createSegmentsForFile = (parentSegments, fileName) => {
+  const fileSegment = stripPageFileExtension(fileName);
 
-    try {
-      await access(filePath);
+  if (fileSegment === 'index') {
+    return parentSegments;
+  }
 
-      return filePath;
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw error;
+  return [...parentSegments, fileSegment];
+};
+
+const collectPageFiles = async (directory, parentSegments = []) => {
+  const entries = await readVisibleEntries(directory);
+  const pageFiles = [];
+
+  for (const entry of entries) {
+    const entryPath = path.join(directory, entry.name);
+
+    if (isPageFile(entry)) {
+      const segments = createSegmentsForFile(parentSegments, entry.name);
+
+      if (
+        segments.length > 0 &&
+        segments.length <= 3 &&
+        !segments.some((segment) => ignoredSegmentNames.has(segment))
+      ) {
+        pageFiles.push({
+          filePath: entryPath,
+          isIndexFile: stripPageFileExtension(entry.name) === 'index',
+          segments,
+        });
       }
+
+      continue;
+    }
+
+    if (
+      entry.isDirectory() &&
+      parentSegments.length < 3 &&
+      !ignoredSegmentNames.has(entry.name)
+    ) {
+      pageFiles.push(
+        ...(await collectPageFiles(entryPath, [...parentSegments, entry.name])),
+      );
     }
   }
 
-  return null;
+  return pageFiles;
 };
 
 const createImportPath = (filePath) => {
@@ -88,6 +128,7 @@ const createImportPath = (filePath) => {
 
 const createRouteEntry = ({
   filePath,
+  isIndexFile,
   label,
   menuKey,
   segments,
@@ -96,11 +137,125 @@ const createRouteEntry = ({
 }) => ({
   importName: createIdentifier(segments, usedIdentifiers),
   importPath: createImportPath(filePath),
+  isIndexFile,
   label,
   menuKey,
   path: pathToRoute(segments),
+  segments,
   topLevelKey,
 });
+
+const compareSegments = (left, right) => {
+  const segmentCount = Math.max(left.segments.length, right.segments.length);
+
+  for (let index = 0; index < segmentCount; index += 1) {
+    const leftSegment = left.segments[index];
+    const rightSegment = right.segments[index];
+
+    if (leftSegment === undefined) {
+      return -1;
+    }
+
+    if (rightSegment === undefined) {
+      return 1;
+    }
+
+    const segmentCompare = leftSegment.localeCompare(rightSegment);
+
+    if (segmentCompare !== 0) {
+      return segmentCompare;
+    }
+  }
+
+  return left.importPath.localeCompare(right.importPath);
+};
+
+const groupRoutesByTopLevel = (routes) => {
+  const routeGroups = new Map();
+
+  for (const route of routes) {
+    const topLevelSegment = route.segments[0];
+
+    if (!routeGroups.has(topLevelSegment)) {
+      routeGroups.set(topLevelSegment, []);
+    }
+
+    routeGroups.get(topLevelSegment).push(route);
+  }
+
+  return [...routeGroups.entries()].sort(([left], [right]) =>
+    left.localeCompare(right),
+  );
+};
+
+const createSidebarMenus = (topLevelRoutes) => {
+  const secondLevelRouteGroups = new Map();
+
+  const getRouteGroup = (secondLevelSegment) => {
+    if (!secondLevelRouteGroups.has(secondLevelSegment)) {
+      secondLevelRouteGroups.set(secondLevelSegment, {
+        route: null,
+        thirdLevelRoutes: [],
+      });
+    }
+
+    return secondLevelRouteGroups.get(secondLevelSegment);
+  };
+
+  for (const route of topLevelRoutes) {
+    const [, secondLevelSegment] = route.segments;
+
+    if (!secondLevelSegment) {
+      continue;
+    }
+
+    const routeGroup = getRouteGroup(secondLevelSegment);
+
+    if (route.segments.length === 2) {
+      routeGroup.route = route;
+      continue;
+    }
+
+    if (route.segments.length === 3) {
+      routeGroup.thirdLevelRoutes.push(route);
+    }
+  }
+
+  return [...secondLevelRouteGroups.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([secondLevelSegment, routeGroup]) => {
+      const { route, thirdLevelRoutes } = routeGroup;
+
+      if (thirdLevelRoutes.length === 0 && route) {
+        return {
+          key: route.menuKey,
+          label: route.label,
+          path: route.path,
+        };
+      }
+
+      return {
+        key: `group:${pathToRoute([topLevelRoutes[0].segments[0], secondLevelSegment])}`,
+        label: secondLevelSegment,
+        children: [
+          ...(route
+            ? [
+                {
+                  key: route.menuKey,
+                  label: route.isIndexFile ? 'index' : route.label,
+                  path: route.path,
+                },
+              ]
+            : []),
+          ...thirdLevelRoutes.sort(compareSegments).map((thirdLevelRoute) => ({
+            key: thirdLevelRoute.menuKey,
+            label: thirdLevelRoute.label,
+            path: thirdLevelRoute.path,
+          })),
+        ],
+      };
+    });
+};
 
 const formatRoutes = (routes) => {
   if (routes.length === 0) {
@@ -126,126 +281,52 @@ const formatMenuMap = (menuMap) => JSON.stringify(menuMap, null, 2);
 
 const generate = async () => {
   const usedIdentifiers = new Set();
+  const usedRoutePaths = new Map();
   const routes = [];
   const headerMenus = [];
   const sidebarMenusByTopLevel = {};
-  const topLevelDirectories = await readDirectories(pagesDir);
 
-  for (const topLevelDirectory of topLevelDirectories) {
-    const topLevelPath = path.join(pagesDir, topLevelDirectory.name);
-    const topLevelIndex = await findIndexFile(topLevelPath);
-    const secondLevelDirectories = await readDirectories(topLevelPath);
-    const topLevelKey = pathToRoute([topLevelDirectory.name]);
-    const topLevelRoutes = [];
-    const secondLevelMenus = [];
+  for (const pageFile of await collectPageFiles(pagesDir)) {
+    const topLevelKey = pathToRoute([pageFile.segments[0]]);
+    const routePath = pathToRoute(pageFile.segments);
+    const previousFilePath = usedRoutePaths.get(routePath);
 
-    const topLevelRoute = topLevelIndex
-      ? createRouteEntry({
-          filePath: topLevelIndex,
-          label: topLevelDirectory.name,
-          menuKey: topLevelKey,
-          segments: [topLevelDirectory.name],
-          topLevelKey,
-          usedIdentifiers,
-        })
-      : null;
-
-    if (topLevelRoute) {
-      topLevelRoutes.push(topLevelRoute);
+    if (previousFilePath) {
+      throw new Error(
+        `Duplicate route "${routePath}" generated by ${path.relative(rootDir, previousFilePath)} and ${path.relative(rootDir, pageFile.filePath)}`,
+      );
     }
 
-    for (const secondLevelDirectory of secondLevelDirectories) {
-      const secondLevelPath = path.join(topLevelPath, secondLevelDirectory.name);
-      const secondLevelIndex = await findIndexFile(secondLevelPath);
-      const secondLevelSegments = [topLevelDirectory.name, secondLevelDirectory.name];
-      const secondLevelRoute = secondLevelIndex
-        ? createRouteEntry({
-            filePath: secondLevelIndex,
-            label: secondLevelDirectory.name,
-            menuKey: pathToRoute(secondLevelSegments),
-            segments: secondLevelSegments,
-            topLevelKey,
-            usedIdentifiers,
-          })
-        : null;
-      const thirdLevelDirectories = await readDirectories(secondLevelPath);
-      const thirdLevelRoutes = [];
+    usedRoutePaths.set(routePath, pageFile.filePath);
 
-      for (const thirdLevelDirectory of thirdLevelDirectories) {
-        const thirdLevelPath = path.join(secondLevelPath, thirdLevelDirectory.name);
-        const thirdLevelIndex = await findIndexFile(thirdLevelPath);
+    routes.push(
+      createRouteEntry({
+        filePath: pageFile.filePath,
+        isIndexFile: pageFile.isIndexFile,
+        label: pageFile.segments.at(-1),
+        menuKey: pageFile.segments.length === 1 ? topLevelKey : routePath,
+        segments: pageFile.segments,
+        topLevelKey,
+        usedIdentifiers,
+      }),
+    );
+  }
 
-        if (!thirdLevelIndex) {
-          continue;
-        }
+  routes.sort(compareSegments);
 
-        const thirdLevelSegments = [
-          topLevelDirectory.name,
-          secondLevelDirectory.name,
-          thirdLevelDirectory.name,
-        ];
+  for (const [topLevelSegment, topLevelRoutes] of groupRoutesByTopLevel(routes)) {
+    topLevelRoutes.sort(compareSegments);
 
-        thirdLevelRoutes.push(
-          createRouteEntry({
-            filePath: thirdLevelIndex,
-            label: thirdLevelDirectory.name,
-            menuKey: pathToRoute(thirdLevelSegments),
-            segments: thirdLevelSegments,
-            topLevelKey,
-            usedIdentifiers,
-          }),
-        );
-      }
-
-      if (secondLevelRoute) {
-        topLevelRoutes.push(secondLevelRoute);
-      }
-
-      topLevelRoutes.push(...thirdLevelRoutes);
-
-      if (thirdLevelRoutes.length > 0) {
-        secondLevelMenus.push({
-          key: `group:${pathToRoute(secondLevelSegments)}`,
-          label: secondLevelDirectory.name,
-          children: [
-            ...(secondLevelRoute
-              ? [
-                  {
-                    key: secondLevelRoute.menuKey,
-                    label: 'index',
-                    path: secondLevelRoute.path,
-                  },
-                ]
-              : []),
-            ...thirdLevelRoutes.map((route) => ({
-              key: route.menuKey,
-              label: route.label,
-              path: route.path,
-            })),
-          ],
-        });
-      } else if (secondLevelRoute) {
-        secondLevelMenus.push({
-          key: secondLevelRoute.menuKey,
-          label: secondLevelRoute.label,
-          path: secondLevelRoute.path,
-        });
-      }
-    }
-
-    if (topLevelRoutes.length === 0) {
-      continue;
-    }
-
-    routes.push(...topLevelRoutes);
+    const topLevelKey = pathToRoute([topLevelSegment]);
+    const topLevelRoute = topLevelRoutes.find((route) => route.segments.length === 1);
 
     headerMenus.push({
       key: topLevelKey,
-      label: topLevelDirectory.name,
+      label: topLevelSegment,
       path: topLevelRoute?.path ?? topLevelRoutes[0].path,
     });
 
-    sidebarMenusByTopLevel[topLevelKey] = secondLevelMenus;
+    sidebarMenusByTopLevel[topLevelKey] = createSidebarMenus(topLevelRoutes);
   }
 
   const importLines = routes
@@ -261,7 +342,7 @@ export type DemoRoute = {
   menuKey: string;
   topLevelKey: string;
   label: string;
-  Component: ComponentType;
+  Component: ComponentType<any>;
 };
 
 export type DemoMenuItem = {
