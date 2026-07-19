@@ -98,11 +98,6 @@ export default defineConfig({
     modules: {
       localsConvention: 'camelCaseOnly',
     },
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler',
-      },
-    },
   },
   plugins: [implicitScssModules(), react()],
   server: {
