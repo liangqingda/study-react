@@ -2,8 +2,8 @@ import { Button } from '@mantine/core';
 import { IconArrowBackUp } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 
-import { defaultRoutePath } from '../../generated/routes';
-import ResultView from './components/ResultView';
+import ResultView from '@/pages/Errors/components/ResultView';
+import { defaultRoutePath } from '@/generated/routes';
 
 const NotFound = () => {
   const navigate = useNavigate();

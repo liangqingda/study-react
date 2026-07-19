@@ -100,6 +100,11 @@ export default defineConfig({
     },
   },
   plugins: [implicitScssModules(), react()],
+  resolve: {
+    alias: {
+      '@': srcDir,
+    },
+  },
   server: {
     port: 3000,
   },
