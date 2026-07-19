@@ -2,8 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
 import { defaultRoutePath, demoRoutes } from './generated/routes';
 import BasicLayout from './layouts/BasicLayout';
-import EmptyRoutes from './pages/errors/EmptyRoutes';
-import NotFound from './pages/errors/NotFound';
+import EmptyRoutes from './pages/Errors/EmptyRoutes';
+import NotFound from './pages/Errors/NotFound';
 
 const DemoRoutes = () => {
   if (demoRoutes.length === 0) {

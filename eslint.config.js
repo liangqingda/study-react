@@ -20,17 +20,4 @@ export default [
       },
     },
   },
-  {
-    files: ['**/*.d.ts'],
-    rules: {
-      // .d.ts 文件不检查注释前后空格格式
-      'spaced-comment': 'off',
-    },
-  },
-  {
-    files: ['src/pages/**/*.{ts,tsx}'],
-    rules: {
-      'liangqingda-react/folder-naming-convention': 'off',
-    },
-  },
 ];

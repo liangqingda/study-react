@@ -8,13 +8,21 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const pagesDir = path.join(rootDir, 'src/pages');
 const outputFile = path.join(rootDir, 'src/generated/routes.tsx');
 const pageFileExtensionPattern = /\.(tsx|jsx|ts|js)$/;
-const ignoredSegmentNames = new Set(['components', 'hooks', 'utils']);
+const ignoredSegmentNames = new Set(['components', 'errors', 'hooks', 'utils']);
 
 const compareByName = (left, right) => left.name.localeCompare(right.name);
 
 const jsString = (value) => JSON.stringify(value);
 
 const pathToRoute = (segments) => `/${segments.join('/')}`;
+
+const toRouteSegment = (value) =>
+  value
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-')
+    .toLowerCase();
 
 const stripPageFileExtension = (fileName) =>
   fileName.replace(pageFileExtensionPattern, '');
@@ -23,6 +31,9 @@ const isPageFile = (entry) =>
   entry.isFile() &&
   pageFileExtensionPattern.test(entry.name) &&
   !entry.name.endsWith('.d.ts');
+
+const isIgnoredSegment = (segment) =>
+  ignoredSegmentNames.has(segment.toLowerCase());
 
 const toIdentifierPart = (value) =>
   value
@@ -91,7 +102,7 @@ const collectPageFiles = async (directory, parentSegments = []) => {
       if (
         segments.length > 0 &&
         segments.length <= 3 &&
-        !segments.some((segment) => ignoredSegmentNames.has(segment))
+        !segments.some((segment) => isIgnoredSegment(segment))
       ) {
         pageFiles.push({
           filePath: entryPath,
@@ -106,7 +117,7 @@ const collectPageFiles = async (directory, parentSegments = []) => {
     if (
       entry.isDirectory() &&
       parentSegments.length < 3 &&
-      !ignoredSegmentNames.has(entry.name)
+      !isIgnoredSegment(entry.name)
     ) {
       pageFiles.push(
         ...(await collectPageFiles(entryPath, [...parentSegments, entry.name])),
@@ -140,8 +151,8 @@ const createRouteEntry = ({
   isIndexFile,
   label,
   menuKey,
-  path: pathToRoute(segments),
-  segments,
+  path: pathToRoute(segments.map(toRouteSegment)),
+  segments: segments.map(toRouteSegment),
   topLevelKey,
 });
 
@@ -287,8 +298,9 @@ const generate = async () => {
   const sidebarMenusByTopLevel = {};
 
   for (const pageFile of await collectPageFiles(pagesDir)) {
-    const topLevelKey = pathToRoute([pageFile.segments[0]]);
-    const routePath = pathToRoute(pageFile.segments);
+    const routeSegments = pageFile.segments.map(toRouteSegment);
+    const topLevelKey = pathToRoute([routeSegments[0]]);
+    const routePath = pathToRoute(routeSegments);
     const previousFilePath = usedRoutePaths.get(routePath);
 
     if (previousFilePath) {
@@ -303,7 +315,7 @@ const generate = async () => {
       createRouteEntry({
         filePath: pageFile.filePath,
         isIndexFile: pageFile.isIndexFile,
-        label: pageFile.segments.at(-1),
+        label: routeSegments.at(-1),
         menuKey: pageFile.segments.length === 1 ? topLevelKey : routePath,
         segments: pageFile.segments,
         topLevelKey,
