@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react';
 
 import CssDemosVerticalCenteringPage from "../pages/CssDemos/VerticalCentering/index";
+import ExpressMiddlewarePage from "../pages/Express/Middleware/index";
 import ExpressResponseMethodsPage from "../pages/Express/ResponseMethods/index";
 
 export type DemoRoute = {
@@ -31,6 +32,13 @@ export const demoRoutes: DemoRoute[] = [
     Component: CssDemosVerticalCenteringPage,
   },
   {
+    path: "/express/middleware",
+    menuKey: "/express/middleware",
+    topLevelKey: "/express",
+    label: "middleware",
+    Component: ExpressMiddlewarePage,
+  },
+  {
     path: "/express/response-methods",
     menuKey: "/express/response-methods",
     topLevelKey: "/express",
@@ -48,7 +56,7 @@ export const headerMenus: DemoMenuItem[] = [
   {
     "key": "/express",
     "label": "express",
-    "path": "/express/response-methods"
+    "path": "/express/middleware"
   }
 ];
 
@@ -61,6 +69,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
     }
   ],
   "/express": [
+    {
+      "key": "/express/middleware",
+      "label": "middleware",
+      "path": "/express/middleware"
+    },
     {
       "key": "/express/response-methods",
       "label": "response-methods",
