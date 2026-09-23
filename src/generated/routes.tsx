@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react';
 
 import CssDemosVerticalCenteringPage from "../pages/CssDemos/VerticalCentering/index";
+import ExpressResponseMethodsPage from "../pages/Express/ResponseMethods/index";
 
 export type DemoRoute = {
   path: string;
@@ -29,6 +30,13 @@ export const demoRoutes: DemoRoute[] = [
     label: "vertical-centering",
     Component: CssDemosVerticalCenteringPage,
   },
+  {
+    path: "/express/response-methods",
+    menuKey: "/express/response-methods",
+    topLevelKey: "/express",
+    label: "response-methods",
+    Component: ExpressResponseMethodsPage,
+  },
 ];
 
 export const headerMenus: DemoMenuItem[] = [
@@ -36,6 +44,11 @@ export const headerMenus: DemoMenuItem[] = [
     "key": "/css-demos",
     "label": "css-demos",
     "path": "/css-demos/vertical-centering"
+  },
+  {
+    "key": "/express",
+    "label": "express",
+    "path": "/express/response-methods"
   }
 ];
 
@@ -45,6 +58,13 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
       "key": "/css-demos/vertical-centering",
       "label": "vertical-centering",
       "path": "/css-demos/vertical-centering"
+    }
+  ],
+  "/express": [
+    {
+      "key": "/express/response-methods",
+      "label": "response-methods",
+      "path": "/express/response-methods"
     }
   ]
 };
