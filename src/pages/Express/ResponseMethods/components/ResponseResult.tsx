@@ -16,7 +16,7 @@ const statusColor = (status: number) => {
   return 'teal';
 };
 
-const ResponseResult = ({ result, showPreview }: { result: Result; showPreview: boolean }) => (
+const ResponseResult = ({ interpretation, result, showPreview }: { interpretation: string; result: Result; showPreview: boolean }) => (
   <div className={styles.response}>
     <div className={styles.responseTitle}>
       <h3>Response</h3>
@@ -35,6 +35,10 @@ const ResponseResult = ({ result, showPreview }: { result: Result; showPreview: 
       <dt>Content-Disposition</dt><dd>{result.disposition}</dd>
       <dt>Location</dt><dd>{result.location}</dd>
     </dl>
+    <div className={styles.interpretation}>
+      <h3>为什么得到这个结果</h3>
+      <p>{interpretation}</p>
+    </div>
     <h3>Body</h3>
     {result.body ? <pre className={styles.body}>{result.body}</pre> : <div className={styles.noBody}>响应体为空</div>}
     {showPreview && result.body && (

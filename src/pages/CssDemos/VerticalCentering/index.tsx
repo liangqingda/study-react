@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Badge,
   Card,
@@ -6,6 +7,7 @@ import {
   Group,
   Kbd,
   List,
+  SegmentedControl,
   SimpleGrid,
   Stack,
   Text,
@@ -34,6 +36,9 @@ type CenteringMethod = {
   code: string;
   icon: ReactNode;
   note: string;
+  mechanism: string;
+  observation: string;
+  limitation: string;
   previewClassName: string;
   previewHint: string;
   title: string;
@@ -51,6 +56,9 @@ const centeringMethods: CenteringMethod[] = [
 }`,
     icon: <IconStack2 size={20} stroke={1.8} />,
     note: '子元素尺寸未知、数量可变时优先考虑，横向和纵向对齐都稳定。',
+    mechanism: 'display: flex 建立弹性布局；align-items 对齐交叉轴（这里是纵向），justify-content 对齐主轴（这里是横向）。两者结合才是双轴居中。',
+    observation: '切到增高内容：白色内容块变高，但中心仍落在横向参考线上；无需提前知道子元素高度。',
+    limitation: '若容器改成 flex-direction: column，两个轴的职责会交换；只设 align-items 也不会同时水平居中。',
     previewClassName: styles.previewFlex,
     previewHint: '弹性容器',
     title: 'Flexbox',
@@ -64,6 +72,9 @@ const centeringMethods: CenteringMethod[] = [
 }`,
     icon: <IconLayoutGrid size={20} stroke={1.8} />,
     note: '只有一个核心内容块时最简洁，place-items 同时处理两个轴。',
+    mechanism: 'display: grid 建立网格；place-items: center 是 align-items 和 justify-items 的简写，让网格项在单元格内沿两个轴居中。',
+    observation: '增高后，网格项仍在容器中间。这里只有一个网格项，因此整个单元格就是可用区域。',
+    limitation: '有多个网格项时，它们可能占不同网格单元；place-items 居中的是各自单元里的项，不等于把整组项合成一个块居中。',
     previewClassName: styles.previewGrid,
     previewHint: '网格居中',
     title: 'Grid place-items',
@@ -83,6 +94,9 @@ const centeringMethods: CenteringMethod[] = [
 }`,
     icon: <IconTransform size={20} stroke={1.8} />,
     note: '适合弹层、徽标、浮动元素，不依赖子元素固定高度。',
+    mechanism: 'top/left: 50% 把子元素左上角移到父容器中心；translate(-50%, -50%) 再按子元素自己的宽高向回移动一半。',
+    observation: '增高后自身的 50% 距离随尺寸变化，因此内容块仍以中心点对齐参考线。',
+    limitation: 'absolute 让元素脱离正常文档流，父容器不会靠它撑开高度；普通段落布局通常用 flex/grid 更合适。',
     previewClassName: styles.previewAbsolute,
     previewHint: '脱离文档流',
     title: 'Absolute + transform',
@@ -102,6 +116,9 @@ const centeringMethods: CenteringMethod[] = [
 }`,
     icon: <IconBoxModel size={20} stroke={1.8} />,
     note: '子元素高度已知时可用，常见于固定尺寸的面板或图标块。',
+    mechanism: '绝对定位后同时设置 top/bottom 为 0，并给子元素一个明确高度；上下 auto margin 平分剩余空间。',
+    observation: '切到增高内容：盒子的高度仍固定为 88px，内部文字可能显得拥挤；这说明它不能像 flex/grid 那样无条件适应内容。',
+    limitation: '需要可计算的高度和足够空间；内容超过固定尺寸时先调整高度或改用适应内容的布局，不要把溢出当成居中成功。',
     previewClassName: styles.previewMarginAuto,
     previewHint: '已知高度',
     title: 'Position + margin auto',
@@ -116,6 +133,9 @@ const centeringMethods: CenteringMethod[] = [
 }`,
     icon: <IconTable size={20} stroke={1.8} />,
     note: '老项目里很常见，处理文本块和兼容性场景时仍然可靠。',
+    mechanism: 'display: table-cell 让父容器按表格单元格布局；vertical-align: middle 在单元格内部垂直对齐，text-align: center 另管水平文本对齐。',
+    observation: '增高内容后，单元格会继续把内容块放在竖直中部；左右对齐来自另一条 text-align 规则。',
+    limitation: '它改变了父元素的布局模型；新布局通常先用 flex/grid，但维护已有 table-cell 结构时了解它很有用。',
     previewClassName: styles.previewTable,
     previewHint: '表格单元格',
     title: 'Table-cell',
@@ -125,12 +145,15 @@ const centeringMethods: CenteringMethod[] = [
   {
     accent: 'pink',
     code: `.parent {
-  height: 72px;
-  line-height: 72px;
+  height: 178px;
+  line-height: 178px;
   text-align: center;
 }`,
     icon: <IconTextSize size={20} stroke={1.8} />,
     note: '只适合单行文本，内容换行后就应该换成 flex 或 grid。',
+    mechanism: '单行文本的行盒高度由 line-height 决定；当行高等于容器高度时，文字在这一行内看起来竖直居中。text-align 另负责水平居中。',
+    observation: '紧凑内容只有一行；切到增高内容后文字换行，每一行仍占 178px，后续行会超出容器，无法整体居中。',
+    limitation: '这不是通用的元素居中：不适用于多行文本、未知高度的内容块或需要容器随内容增长的场景。',
     previewClassName: styles.previewLineHeight,
     previewHint: '单行文本',
     title: 'Line-height',
@@ -154,23 +177,25 @@ const principles = [
   },
 ];
 
-const renderPreviewTarget = (method: CenteringMethod) => (
-  <div
-    className={`${styles.previewTarget} ${
-      method.variant === 'single-line' ? styles.previewTargetSingle : ''
-    }`}
-  >
-    <strong>{method.previewHint}</strong>
-    {method.variant !== 'single-line' && <span>内容高度未知</span>}
-  </div>
-);
+const renderPreviewTarget = (method: CenteringMethod, tall: boolean) => {
+  if (method.variant === 'single-line') {
+    return <strong className={styles.singleLineText}>{tall ? <>第一行<br />第二行</> : method.previewHint}</strong>;
+  }
 
-const renderPreview = (method: CenteringMethod) => {
+  return (
+    <div className={`${styles.previewTarget} ${tall ? styles.previewTargetTall : ''}`}>
+      <strong>{method.previewHint}</strong>
+      <span>{tall ? '多行内容：高度增加后再观察中心位置' : '内容高度未知'}</span>
+    </div>
+  );
+};
+
+const renderPreview = (method: CenteringMethod, tall: boolean) => {
   if (method.variant === 'table') {
     return (
       <div className={`${styles.previewFrame} ${method.previewClassName}`}>
         <div className={styles.previewTableCell}>
-          {renderPreviewTarget(method)}
+          {renderPreviewTarget(method, tall)}
         </div>
       </div>
     );
@@ -178,12 +203,15 @@ const renderPreview = (method: CenteringMethod) => {
 
   return (
     <div className={`${styles.previewFrame} ${method.previewClassName}`}>
-      {renderPreviewTarget(method)}
+      {renderPreviewTarget(method, tall)}
     </div>
   );
 };
 
-const VerticalCenteringDemo = () => (
+const VerticalCenteringDemo = () => {
+  const [tall, setTall] = useState(false);
+
+  return (
   <main className={styles.centeringDemo}>
     <Container className={styles.centeringShell} size="xl">
       <Stack gap="xl">
@@ -233,6 +261,10 @@ const VerticalCenteringDemo = () => (
               </div>
             ))}
           </SimpleGrid>
+          <div className={styles.previewControl}>
+            <Text fw={700} size="sm">预览内容尺寸</Text>
+            <SegmentedControl aria-label="预览内容尺寸" data={[{ label: '紧凑', value: 'compact' }, { label: '增高 / 换行', value: 'tall' }]} onChange={(value) => setTall(value === 'tall')} value={tall ? 'tall' : 'compact'} />
+          </div>
         </section>
 
         <SimpleGrid
@@ -272,11 +304,17 @@ const VerticalCenteringDemo = () => (
                   </Group>
                 </Group>
 
-                {renderPreview(method)}
+                {renderPreview(method, tall)}
 
                 <Text c="dimmed" lh={1.65} size="sm">
                   {method.note}
                 </Text>
+
+                <div className={styles.methodLesson}>
+                  <h3>为什么能居中</h3><Text size="sm">{method.mechanism}</Text>
+                  <h3>切换尺寸看什么</h3><Text size="sm">{method.observation}</Text>
+                  <h3>什么时候不适合</h3><Text size="sm">{method.limitation}</Text>
+                </div>
 
                 <Code block className={styles.codeBlock}>
                   {method.code}
@@ -321,6 +359,7 @@ const VerticalCenteringDemo = () => (
       </Stack>
     </Container>
   </main>
-);
+  );
+};
 
 export default VerticalCenteringDemo;

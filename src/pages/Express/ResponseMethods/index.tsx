@@ -48,25 +48,23 @@ const ResponseMethods = () => {
             <div className={styles.detailHeading}>
               <div>
                 <Title order={2}>{selected.name}</Title>
-                <Text c="dimmed" size="sm">{selected.note}</Text>
+                <Text c="dimmed" size="sm">{selected.note} {selected.explanation}</Text>
               </div>
               <Badge color="green" variant="dot">GET</Badge>
             </div>
 
-            <div className={styles.explanation}>
-              <div>
-                <h3>用途与区别</h3>
-                <Text size="sm">{selected.explanation}</Text>
+            <section className={styles.explanation}>
+              <h3>这次请求会怎样走</h3>
+              <ol className={styles.steps}>{selected.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+              <div className={styles.explanationGrid}>
+                <div><h3>关键代码</h3><pre className={styles.exampleCode}>{selected.code}</pre></div>
+                <div><h3>发送后应看到</h3><Text size="sm">{selected.observation}</Text></div>
               </div>
-              <div>
-                <h3>关键代码</h3>
-                <pre className={styles.exampleCode}>{selected.code}</pre>
+              <div className={styles.comparison}>
+                <h3>和相近方法有什么不同</h3>
+                <Text size="sm">{selected.comparison}</Text>
               </div>
-              <div className={styles.observation}>
-                <h3>观察结果</h3>
-                <Text size="sm">{selected.observation}</Text>
-              </div>
-            </div>
+            </section>
 
             <div className={styles.requestBar}>
               <Code className={styles.url}>{url}</Code>
@@ -92,7 +90,7 @@ const ResponseMethods = () => {
             {error && <Text c="red" role="alert">{error}</Text>}
             {loading && <div className={styles.empty}><Loader size="sm" /></div>}
             {!loading && !result && !error && <div className={styles.empty}>等待请求</div>}
-            {result && <ResponseResult result={result} showPreview={selected.slug === 'render'} />}
+            {result && <ResponseResult interpretation={selected.interpretation} result={result} showPreview={selected.slug === 'render'} />}
           </section>
         </div>
       </div>
