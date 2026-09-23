@@ -42,9 +42,9 @@ export const methods: Method[] = [
   {
     name: 'res.redirect()', slug: 'redirect', description: '重定向请求',
     note: '告诉客户端改去另一个地址。',
-    explanation: '这里用临时重定向把请求指向 JSON 示例。浏览器导航通常会自动跟随，页面里的检查请求则保留原始响应。',
+    explanation: '这里用临时重定向把请求指向 JSON 示例。浏览器的 fetch 会自动跟随，因此页面展示的是最终 JSON 响应。',
     code: "res.redirect(302, '/api/response-methods/json');",
-    observation: '查看 302 状态和 Location 响应头；点击“打开跳转”查看最终页面。',
+    observation: '页面会显示最终的 200 响应和 URL；在开发者工具的网络面板查看中间的 302 与 Location，或点击“打开跳转”。',
   },
   {
     name: 'res.render()', slug: 'render', description: '渲染视图模板',

@@ -7,6 +7,8 @@ export type Result = {
   disposition: string;
   location: string;
   body: string;
+  redirected: boolean;
+  finalUrl: string;
 };
 
 export const useResponseRequest = () => {
@@ -35,7 +37,7 @@ export const useResponseRequest = () => {
     setResult(null);
 
     try {
-      const response = await fetch(url, { redirect: 'manual', signal: controller.signal });
+      const response = await fetch(url, { signal: controller.signal });
       const body = await response.text();
 
       if (controllerRef.current !== controller) {
@@ -49,6 +51,8 @@ export const useResponseRequest = () => {
         disposition: response.headers.get('content-disposition') ?? '—',
         location: response.headers.get('location') ?? '—',
         body,
+        redirected: response.redirected,
+        finalUrl: response.url,
       });
     } catch {
       if (controllerRef.current === controller && !controller.signal.aborted) {

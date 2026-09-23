@@ -25,6 +25,12 @@ const ResponseResult = ({ result, showPreview }: { result: Result; showPreview: 
       </Badge>
     </div>
     <dl className={styles.headers}>
+      {result.redirected && (
+        <>
+          <dt>Redirect</dt><dd>已跟随重定向；以下是最终响应</dd>
+          <dt>Final URL</dt><dd>{result.finalUrl}</dd>
+        </>
+      )}
       <dt>Content-Type</dt><dd>{result.contentType}</dd>
       <dt>Content-Disposition</dt><dd>{result.disposition}</dd>
       <dt>Location</dt><dd>{result.location}</dd>
