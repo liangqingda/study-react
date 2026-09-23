@@ -234,6 +234,30 @@
   color: #48566a;
 }
 
+:global(html[data-mantine-color-scheme='dark']) {
+  .centering-demo {
+    background:
+      linear-gradient(90deg, rgba(122, 156, 179, 0.1) 1px, transparent 1px) 0 0 / 36px 36px,
+      linear-gradient(180deg, #171e25, #202a30);
+  }
+
+  .demo-title, .summary-title { color: #e7edf4; }
+  .summary-band, .notes-band, .method-card {
+    border-color: #394954;
+    background: #242f36;
+    box-shadow: none;
+  }
+  .principle-item, .preview-target { border-color: #40505a; background: #2c3a43; }
+  .preview-target { color: #ecf4f7; }
+  .preview-target span, .notes-list { color: #b6c7d1; }
+  .preview-frame {
+    border-color: #40505a;
+    background:
+      linear-gradient(90deg, rgba(150, 177, 193, 0.1) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(180deg, #1b252d, #27343d);
+  }
+}
+
 @media (max-width: 860px) {
   .centering-demo {
     padding: 24px;

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
-import { Group, SegmentedControl, ThemeIcon, Title } from '@mantine/core';
-import { IconBrandReact } from '@tabler/icons-react';
+import { ActionIcon, Group, SegmentedControl, ThemeIcon, Title, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import { IconBrandReact, IconMoon, IconSun } from '@tabler/icons-react';
 
 import type { DemoMenuItem } from '../../generated/routes';
 
@@ -13,6 +13,8 @@ type HeaderProps = {
 
 const Header = ({ menus, selectedTopLevelKey }: HeaderProps) => {
   const navigate = useNavigate();
+  const { setColorScheme } = useMantineColorScheme();
+  const isDark = useComputedColorScheme('light') === 'dark';
   const activeMenuKey = selectedTopLevelKey ?? menus[0]?.key;
   const menuData = menus.map((item) => ({
     label: item.label,
@@ -51,6 +53,16 @@ const Header = ({ menus, selectedTopLevelKey }: HeaderProps) => {
           />
         </nav>
       ) : null}
+      <ActionIcon
+        aria-label={isDark ? '切换到亮色主题' : '切换到暗色主题'}
+        className={styles.themeToggle}
+        onClick={() => setColorScheme(isDark ? 'light' : 'dark')}
+        size="lg"
+        title={isDark ? '切换到亮色主题' : '切换到暗色主题'}
+        variant="subtle"
+      >
+        {isDark ? <IconSun size={20} /> : <IconMoon size={20} />}
+      </ActionIcon>
     </Group>
   );
 };

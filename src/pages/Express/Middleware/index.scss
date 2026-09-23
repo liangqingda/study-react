@@ -27,3 +27,19 @@
 .result pre { margin: 0; padding: 18px; border-radius: 6px; background: #17292f; color: #dff2eb; font: 13px/1.7 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 900px) { .page { padding: 20px; } .workspace { grid-template-columns: 1fr; } .navigation { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid #dce5e7; } .nav-item { flex: 0 0 180px; border-bottom: 0; border-left: 0; border-top: 3px solid transparent; } .nav-item.active { border-top-color: #168773; } }
 @media (max-width: 620px) { .page { padding: 16px; } .header h1 { font-size: 26px; } .detail { padding: 18px; } .notes { grid-template-columns: 1fr; gap: 16px; } .action { align-items: stretch; flex-direction: column; } .action button { align-self: flex-end; } }
+
+:global(html[data-mantine-color-scheme='dark']) {
+  .page { background: #171d20; color: #e5ebeb; }
+  .workspace { border-color: #38474b; background: #20292c; }
+  .navigation { border-color: #38474b; background: #1b2427; }
+  .nav-item { border-bottom-color: #354247; }
+  .nav-item:hover { background: #293d3e; }
+  .nav-item.active { background: #21423b; }
+  .nav-item strong { color: #dcf0ea; }
+  .nav-item span { color: #a8babb; }
+  .notes, .result { border-color: #38474b; }
+  .notes h3, .result h3 { color: #80d0bb; }
+  .action { border-color: #38474b; background: #263135; }
+  .empty { border-color: #526266; color: #a8babb; }
+  .trace li { background: #21423b; }
+}

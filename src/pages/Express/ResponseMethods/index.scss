@@ -30,3 +30,20 @@
 .preview { width: 100%; height: 160px; margin-top: 18px; border: 1px solid #dce5e7; border-radius: 6px; }
 @media (max-width: 900px) { .page { padding: 20px; } .workspace { grid-template-columns: 1fr; } .method-list { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid #dce5e7; } .method-item { flex: 0 0 180px; border-bottom: 0; border-left: 0; border-top: 3px solid transparent; } .method-item.active { border-top-color: #168773; } }
 @media (max-width: 620px) { .page { padding: 16px; } .header h1 { font-size: 26px; } .detail { padding: 18px; } .explanation { grid-template-columns: 1fr; gap: 16px; } .observation { grid-column: auto; } .request-bar { align-items: stretch; flex-direction: column; } .request-bar > div { justify-content: flex-end; } .headers { grid-template-columns: 1fr; gap: 4px; } .headers dd { margin-bottom: 10px; } }
+
+:global(html[data-mantine-color-scheme='dark']) {
+  .page { background: #171d20; color: #e5ebeb; }
+  .workspace { border-color: #38474b; background: #20292c; }
+  .method-list { border-color: #38474b; background: #1b2427; }
+  .method-item { border-bottom-color: #354247; }
+  .method-item:hover { background: #293d3e; }
+  .method-item.active { background: #21423b; }
+  .method-item strong { color: #dcf0ea; }
+  .method-item span, .headers dt { color: #a8babb; }
+  .explanation, .response { border-color: #38474b; }
+  .explanation h3 { color: #80d0bb; }
+  .example-code { color: #c6e2dc; }
+  .request-bar { border-color: #38474b; background: #263135; }
+  .headers, .preview { border-color: #38474b; }
+  .empty { border-color: #526266; color: #a8babb; }
+}
