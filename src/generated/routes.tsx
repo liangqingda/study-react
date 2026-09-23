@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react';
 
 import CssDemosVerticalCenteringPage from "../pages/CssDemos/VerticalCentering/index";
+import ExpressErrorHandlingPage from "../pages/Express/ErrorHandling/index";
 import ExpressMiddlewarePage from "../pages/Express/Middleware/index";
 import ExpressResponseMethodsPage from "../pages/Express/ResponseMethods/index";
 
@@ -32,6 +33,13 @@ export const demoRoutes: DemoRoute[] = [
     Component: CssDemosVerticalCenteringPage,
   },
   {
+    path: "/express/error-handling",
+    menuKey: "/express/error-handling",
+    topLevelKey: "/express",
+    label: "error-handling",
+    Component: ExpressErrorHandlingPage,
+  },
+  {
     path: "/express/middleware",
     menuKey: "/express/middleware",
     topLevelKey: "/express",
@@ -56,7 +64,7 @@ export const headerMenus: DemoMenuItem[] = [
   {
     "key": "/express",
     "label": "express",
-    "path": "/express/middleware"
+    "path": "/express/error-handling"
   }
 ];
 
@@ -69,6 +77,11 @@ export const sidebarMenusByTopLevel: Record<string, DemoMenuItem[]> = {
     }
   ],
   "/express": [
+    {
+      "key": "/express/error-handling",
+      "label": "error-handling",
+      "path": "/express/error-handling"
+    },
     {
       "key": "/express/middleware",
       "label": "middleware",
