@@ -88,8 +88,7 @@ const ResponseMethods = () => {
             </div>
 
             {error && <Text c="red" role="alert">{error}</Text>}
-            {loading && <div className={styles.empty}><Loader size="sm" /></div>}
-            {!loading && !result && !error && <div className={styles.empty}>等待请求</div>}
+            {!result && !error && <div className={styles.empty}>{loading ? <Loader size="sm" /> : '等待请求'}</div>}
             {result && <ResponseResult interpretation={selected.interpretation} result={result} showPreview={selected.slug === 'render'} />}
           </section>
         </div>

@@ -34,7 +34,6 @@ export const useResponseRequest = () => {
     controllerRef.current = controller;
     setLoading(true);
     setError('');
-    setResult(null);
 
     try {
       const response = await fetch(url, { signal: controller.signal });
@@ -56,6 +55,7 @@ export const useResponseRequest = () => {
       });
     } catch {
       if (controllerRef.current === controller && !controller.signal.aborted) {
+        setResult(null);
         setError('请求失败。请确认后端已在 localhost:3000 启动。');
       }
     } finally {

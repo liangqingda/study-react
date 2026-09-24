@@ -122,7 +122,6 @@ const Middleware = () => {
     controllerRef.current = controller;
     setLoading(true);
     setError('');
-    setResult(null);
 
     try {
       const response = await fetch(`${basePath}/${selected.key}`, {
@@ -137,6 +136,7 @@ const Middleware = () => {
       }
     } catch {
       if (controllerRef.current === controller && !controller.signal.aborted) {
+        setResult(null);
         setError('请求失败，请确认后端已在 localhost:3000 启动。');
       }
     } finally {
@@ -197,7 +197,7 @@ const Middleware = () => {
               <Button leftSection={<IconPlayerPlay size={16} />} loading={loading} onClick={() => void run()}>发送请求</Button>
             </div>
             {error && <Text c="red" role="alert">{error}</Text>}
-            {!result && !error && <div className={styles.empty}>等待请求</div>}
+            {!result && !error && <div className={styles.empty}>{loading ? '请求中…' : '等待请求'}</div>}
             {result && (
               <div aria-live="polite" className={styles.result}>
                 <div className={styles.resultHeading}><h3>实际结果</h3><Badge color={result.status >= 400 ? 'red' : 'teal'} variant="light">HTTP {result.status}</Badge></div>

@@ -130,7 +130,6 @@ const ErrorHandling = () => {
     const timeoutId = window.setTimeout(() => controller.abort(), 5000);
 
     controllerRef.current = controller;
-    setResult(null);
     setFailure('');
     setLoading(true);
 
@@ -151,6 +150,7 @@ const ErrorHandling = () => {
       });
     } catch {
       if (controllerRef.current === controller) {
+        setResult(null);
         setFailure(selected.slug === 'headers-sent'
           ? '响应未完整结束（连接中断或代理仍在等待），无法读取完整响应。查看后端终端的 headersSent 和连接关闭日志。'
           : '请求失败或超时。请检查 localhost:3000 后端是否已启动。');
@@ -224,7 +224,7 @@ const ErrorHandling = () => {
                 <Text size="sm">{selected.slug === 'headers-sent' ? selected.interpretation : '没有收到可供分析的响应；先检查后端是否运行，再重试。'}</Text>
               </div>
             )}
-            {!loading && !failure && !result && <div className={styles.empty}>等待请求</div>}
+            {!failure && !result && <div className={styles.empty}>{loading ? '请求中…' : '等待请求'}</div>}
             {result && (
               <div className={styles.result}>
                 <div className={styles.resultHeading}>
